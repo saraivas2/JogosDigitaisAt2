@@ -19,6 +19,8 @@ TagManager:
   - queda
   - fire
   - espada
+  - point
+  - pointfire
   layers:
   - Default
   - TransparentFX

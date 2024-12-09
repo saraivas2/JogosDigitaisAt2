@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 
 public class player : MonoBehaviour
@@ -12,86 +14,102 @@ public class player : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField] private int jump = 2;
     private int forca = 90;
-    private bool move, espada = false;
+    private bool move, espada,death = false;
     [SerializeField] private bool bool_jump, bool_jumpUp = false;
     [SerializeField] private int count = 500;
     private Animator animator;
     private int runPlayerHash = Animator.StringToHash("runPlayer");
     private int attack1Hash = Animator.StringToHash("Attack1");
-    private int attack2Hash = Animator.StringToHash("Attack2");
-    private int attack3Hash = Animator.StringToHash("Attack3");
     private int deathHash = Animator.StringToHash("death");
-    private int starRunHash = Animator.StringToHash("startRun");
     private int jumpUpHash = Animator.StringToHash("jumpUp");
     private int jumpDownHash = Animator.StringToHash("jumpDown");
+    private int idleHash = Animator.StringToHash("idle");
     [SerializeField] private int vida = 100;
     private float valorUp = 0;
     [SerializeField] private bool damage = false;
-    [SerializeField] private GameObject Espada;
-    [SerializeField] private GameObject Fire;
-    [SerializeField] private Collider2D isAttack;
-    [SerializeField] private float radius;
-    [SerializeField] private LayerMask EnemyLayer;
+    private GameObject Player;
+    private GameObject Fire;
+    private Collider2D isAttack;
+    public float radius;
+    public LayerMask EnemyLayer;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();   
         animator = GetComponent<Animator>();
-        Espada = GetComponent<GameObject>();
-        Fire = GetComponent<GameObject>();
+        Fire = Resources.Load("FireObjeto") as GameObject;
+        Player = GameObject.FindWithTag("idle");
+        GameObject attackObject = GameObject.FindWithTag("espada");
+        isAttack=attackObject.GetComponent<Collider2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("fire"))
+        if (collision.gameObject.CompareTag("fire"))
         {
-            if (collision.gameObject.CompareTag("fire"))
-            {
-                damage = true;
-                Destroy(collision.gameObject);
-            }
+            damage = true;
+            Destroy(collision.gameObject);
         }
+        
+        if (collision.gameObject.CompareTag("damage"))
+        {
+            vida -= 2;  
+        }
+        
     }
-    void OnCollisionEnter2D(Collision2D collision)
+
+    private void OnTriggerStay2D(Collider2D collision)
     {
+        
+        if (collision.gameObject.CompareTag("damage"))
+        {
+            vida -= 2;
+        }
+
         if (collision.gameObject.CompareTag("floor"))
         {
             jump = 2;
             bool_jump = false;
         }
-        
+
     }
     
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        bool_jump = true;
-    }
-
+    
     // Update is called once per frame
     void Update()
     {
-        count--;
-        comando();
-        count = count_jump(count);
-        float altura = rb.velocity.y;
-        if (bool_jump)
+        if (!death)
         {
-            bool_jumpUp = jumpUp(altura);
-        }
+            count--;
+            comando();
+            count = count_jump(count);
+            float altura = rb.velocity.y;
+            if (bool_jump==true)
+            {
+                bool_jumpUp = jumpUp(altura);
+            }
 
-        if (damage)
+            if (damage)
+            {
+                vida = vida - 10;
+                damage = false;
+            }
+
+            if (vida < 0)
+            {
+                death = true;
+            }
+
+            if (bool_jump == false & move == false & espada == false & death == false)
+            {
+                IdlePlayer();
+            }
+        }
+        else
         {
-            vida = -10;
-            damage = false;
-            
+            DeathPlayer();
         }
-
-        animator.SetBool(runPlayerHash, move && !espada && !bool_jump);
-        animator.SetBool(attack1Hash, espada && !bool_jump);
-        animator.SetBool(jumpUpHash, bool_jump && !espada && bool_jumpUp);
-        animator.SetBool(jumpDownHash, bool_jump && !espada && !bool_jumpUp);
-
     }
 
     
@@ -102,14 +120,74 @@ public class player : MonoBehaviour
             count = 500;
             if (jump == 0) 
             { 
-                jump = 2; 
+                jump = 2;
+                bool_jump = false;
             }
             return count;
         }
         return count;
     }
 
+    private void movePlayer()
+    {
+        animator.SetBool(runPlayerHash, move==true && espada==false && bool_jump==false);
+        animator.SetBool(attack1Hash, false);
+        animator.SetBool(jumpUpHash, false);
+        animator.SetBool(jumpDownHash, false);
+        animator.SetBool(deathHash, false);
+        animator.SetBool(idleHash, false);
+        bool_jump = false;
+    }
 
+    private void JumpPlayer()
+    {
+        animator.SetBool(runPlayerHash, false);
+        animator.SetBool(attack1Hash, false);
+        animator.SetBool(jumpUpHash, bool_jump==true && espada==false && bool_jumpUp==true);
+        animator.SetBool(jumpDownHash, bool_jump==true && espada== false && bool_jumpUp == false);
+        animator.SetBool(deathHash, false);
+        animator.SetBool(idleHash, false);
+    }
+
+
+    private void AttackPlayer()
+    {
+        animator.SetBool(runPlayerHash, false);
+        animator.SetBool(attack1Hash, espada==true && bool_jump==false);
+        animator.SetBool(jumpUpHash, false);
+        animator.SetBool(jumpDownHash, false);
+        animator.SetBool(deathHash, false);
+        animator.SetBool(idleHash, false);
+        bool_jump = false;
+    }
+
+
+    private void DeathPlayer()
+    {
+        animator.SetBool(runPlayerHash, false);
+        animator.SetBool(attack1Hash, false);
+        animator.SetBool(jumpUpHash, false);
+        animator.SetBool(jumpDownHash, false);
+        animator.SetBool(deathHash, death==true);
+        animator.SetBool(idleHash, false);
+        Destroy(Player);
+        Invoke("ReloadScene", 3f);
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    private void IdlePlayer()
+    {
+        animator.SetBool(runPlayerHash, false);
+        animator.SetBool(attack1Hash, false);
+        animator.SetBool(jumpUpHash, false);
+        animator.SetBool(jumpDownHash, false);
+        animator.SetBool(deathHash, false);
+        animator.SetBool(idleHash, true);
+        bool_jump = false;
+    }
     private bool jumpUp(float altura)
     {
         if (altura > valorUp)
@@ -130,33 +208,41 @@ public class player : MonoBehaviour
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
             transform.Translate(new Vector2(vel * Time.deltaTime, 0));
             move = true;
+            movePlayer();
         } else if (Input.GetKey(KeyCode.LeftArrow))
         {
             transform.eulerAngles = new Vector3(0f, 180f, 0f);
             transform.Translate(new Vector2(vel * Time.deltaTime, 0));
             move = true;
+            movePlayer();
         }
         else
         {
             move = false;
         }
 
-        if (jump > 0 & jump <=2)
+        if (jump > 0 & jump <= 2)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 jump--;
-                rb.AddForce(new Vector2(0, 2*forca),ForceMode2D.Force);
-                
+                bool_jump = true;
+                rb.AddForce(new Vector2(0, 2 * forca), ForceMode2D.Force);
+                JumpPlayer();
             }
+        }
+        else
+        {
+            bool_jump = false;  
         }
        
 
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            Collider2D[] isAttack = Physics2D.OverlapCircleAll(Espada.transform.position, radius, EnemyLayer);
             espada = true;
-
+            AttackPlayer();
+            Collider2D[] isAttack = Physics2D.OverlapCircleAll(Player.transform.position, radius, EnemyLayer);
+            
         }
         else
         {
