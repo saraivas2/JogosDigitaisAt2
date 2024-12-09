@@ -12,7 +12,7 @@ public class NPCMovement : MonoBehaviour
     private Transform spawnPoint;
     private float vel = 2f;
     [SerializeField] private bool move,time = false;
-    public int vida = 100;
+    public float vida = 100;
     private Animator animator;
     private Rigidbody2D rb;
     private int walkEHash = Animator.StringToHash("walkE");
@@ -62,11 +62,11 @@ public class NPCMovement : MonoBehaviour
                 MoveNPC();
             }
 
-            if (damage)
+            /*if (damage)
             {
-                vida -= 10;
+                tomarDano(10);
                 damage = false;
-            }
+            }*/
 
             dieNPC(vida);
 
@@ -131,12 +131,16 @@ public class NPCMovement : MonoBehaviour
             animator.SetBool(idleEHash, false);
         }
 
-        if (collision.gameObject.CompareTag("espada"))
+        /*if (collision.gameObject.CompareTag("espada"))
         {
             damage = true;
-        }
+        }*/
     }
 
+    public void tomarDano(float dano)
+    {
+        vida-= dano;
+    }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("floor"))
@@ -164,7 +168,7 @@ public class NPCMovement : MonoBehaviour
     }
 
 
-    private void dieNPC(int vida)
+    private void dieNPC(float vida)
     {
         if (vida <= 0)
         {

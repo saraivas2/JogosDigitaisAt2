@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections;
-using System.Collections;
 using UnityEngine;
 
 public class EnemyRespawner : MonoBehaviour
@@ -23,7 +21,7 @@ public class EnemyRespawner : MonoBehaviour
         }
 
         // Obtenha o script do inimigo
-        enemyScript = currentEnemy.GetComponent<NPCMovement>();
+        enemyScript = GameObject.Find("Enemy").GetComponent<NPCMovement>();
         if (enemyScript == null)
         {
             Debug.LogError("O script NPCMovement não foi encontrado no inimigo!");
