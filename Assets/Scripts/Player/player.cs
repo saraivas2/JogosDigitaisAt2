@@ -108,6 +108,7 @@ public class player : MonoBehaviour
 
             if (bool_jump)
             {
+                bool_jumpUp = jumpUp(altura);
                 JumpPlayer();
             }
 
@@ -246,8 +247,6 @@ public class player : MonoBehaviour
             {
                 jump--;
                 bool_jump = true; 
-                bool_jumpUp = jumpUp(altura);
-                
                 rb.AddForce(new Vector2(0, 2 * forca), ForceMode2D.Force);
                 
         }
@@ -271,6 +270,10 @@ public class player : MonoBehaviour
                     if (col.CompareTag("enemies"))
                     {
                         col.transform.GetComponent<NPCMovement>().tomarDano(5);
+                    }
+                    else if (col.CompareTag("enemy2"))
+                    {
+                        col.transform.GetComponent<NPCMovement1>().tomarDano(5);
                     }
                 }
                 timeAttack = 0.2f;

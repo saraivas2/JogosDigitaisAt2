@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ReloadEnemy : MonoBehaviour
+public class ReloadEnemy1 : MonoBehaviour
 {
     private Transform spawnPoint;
     private GameObject currentEnemy;
-    private NPCMovement enemyScript; // Referência ao script do inimigo
+    private NPCMovement1 enemyScript; // Referência ao script do inimigo
     private float respawnDelay = 3f;
     private bool isRespawning = false;
 
     void Start()
     {
         // Localiza o inimigo na cena
-        currentEnemy = GameObject.FindWithTag("enemies");
+        currentEnemy = GameObject.FindWithTag("enemy2");
         if (currentEnemy == null)
         {
             Debug.LogError("GameObject com a tag 'enemies' não foi encontrado!");
@@ -21,7 +21,7 @@ public class ReloadEnemy : MonoBehaviour
         }
 
         // Obtenha o script do inimigo
-        enemyScript = GameObject.Find("Enemy").GetComponent<NPCMovement>();
+        enemyScript = GameObject.Find("Enemy2").GetComponent<NPCMovement1>();
         if (enemyScript == null)
         {
             Debug.LogError("O script NPCMovement não foi encontrado no inimigo!");
@@ -29,7 +29,7 @@ public class ReloadEnemy : MonoBehaviour
         }
 
         // Localiza o ponto de spawn
-        GameObject Point = GameObject.FindWithTag("point");
+        GameObject Point = GameObject.FindWithTag("point2");
         if (Point != null)
         {
             spawnPoint = Point.transform;
