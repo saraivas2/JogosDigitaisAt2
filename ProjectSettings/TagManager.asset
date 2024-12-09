@@ -24,6 +24,7 @@ TagManager:
   - Jumpchao
   - enemy2
   - point2
+  - pointfire2
   layers:
   - Default
   - TransparentFX

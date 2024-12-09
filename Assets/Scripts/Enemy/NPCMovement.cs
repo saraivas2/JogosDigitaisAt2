@@ -21,7 +21,7 @@ public class NPCMovement : MonoBehaviour
     private int attackEHash = Animator.StringToHash("attackE");
     private int idleEHash = Animator.StringToHash("idle");
     private int count = 500;
-    private int jumpForce = 10;
+    private int jumpForce = 12;
     private int jump = 2;
     [SerializeField] private bool canAttack = false;
     private float attackCooldown = 1.5f;
