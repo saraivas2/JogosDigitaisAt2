@@ -12,7 +12,7 @@ public class NPCMovement : MonoBehaviour
     private Transform spawnPoint;
     private float vel = 2f;
     [SerializeField] private bool move,time = false;
-    [SerializeField] private int vida = 100;
+    public int vida = 100;
     private Animator animator;
     private Rigidbody2D rb;
     private int walkEHash = Animator.StringToHash("walkE");
@@ -31,8 +31,8 @@ public class NPCMovement : MonoBehaviour
     [SerializeField] private float distance;
     [SerializeField] private bool damage = false;
     [SerializeField] private float timeNew = 0.5f;
-    private float timeDeath = 1.5f;
-    private bool isDead = false;
+    public float timeDeath = 1.5f;
+    public bool isDead = false;
 
 
     private void Start()
@@ -177,8 +177,7 @@ public class NPCMovement : MonoBehaviour
             timeDeath-=Time.deltaTime;
             if (timeDeath < 0)
             {
-                OnEnemyDeath(Enemy);
-                timeDeath = 1.5f;
+                OnEnemyDeath(Enemy);   
             }
             
             return;

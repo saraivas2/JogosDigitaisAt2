@@ -170,7 +170,6 @@ public class player : MonoBehaviour
         animator.SetBool(jumpDownHash, false);
         animator.SetBool(deathHash, death==true);
         animator.SetBool(idleHash, false);
-        Destroy(Player);
         Invoke("ReloadScene", 3f);
     }
 

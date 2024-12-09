@@ -21,6 +21,7 @@ TagManager:
   - espada
   - point
   - pointfire
+  - Jumpchao
   layers:
   - Default
   - TransparentFX
